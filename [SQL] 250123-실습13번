@@ -1,0 +1,103 @@
+--1번
+select b.name, l.branch_sum, (SELECT * FROM v) AS avg_amt
+from (
+    select branch_id, sum(amount) as branch_sum
+    from loans
+    where status = 'APPROVED'
+    group by branch_id
+    having sum(amount) < (SELECT * FROM v) ) l, branches b
+where l.branch_id = b.branch_id;
+
+
+select distinct b.name, sum(amount) over (partition by b.branch_id) as branch_sum, round(avg(amount) over (), 2) as avg
+from loans l, branches b
+where l.branch_id = b.branch_id and status = 'APPROVED';
+
+
+--2번
+select e.employee_id, e.department_id, e.name,
+    nvl(e2.name, 'no manager') as manager_name,
+    nvl(d.department_name, 'no department') as manager_name
+from employees e
+left outer join employees e2
+on e.manager_id = e2.employee_id
+left outer join departments d
+on e2.department_id = d.department_id;
+
+
+--3번
+select employee_id, name, salary, round((salary*100/sum(salary) over()), 2) as pct
+from employees
+where salary is not null
+order by pct desc;
+
+--4번
+select *
+from (
+    select account_id, amt, dense_rank() over (order by amt desc) as rank
+    from(
+        select distinct account_id, max(amount) over (partition by account_id) as amt 
+        from transactions
+        order by amt desc)
+    )
+where rank < 6;
+
+--5번
+select distinct department_id, (max(salary) over (partition by department_id) - min(salary) over (partition by department_id)) as diff
+from employees
+order by department_id;
+
+--6번
+select employee_id, name, salary, 
+    round(avg(salary) over (partition by department_id)) as avg, 
+    round(salary - avg(salary) over (partition by department_id)) as diff
+from employees;
+
+--7번
+select *
+from (
+    select sys_connect_by_path(name, '>') as path
+    from employees
+    start with name = 'Employee 241'
+    connect by employee_id = prior manager_id
+    order by level desc)
+where rownum = 1;
+
+--8번
+select *
+from(
+    select employee_id, name, salary, row_number() over (order by salary desc nulls last, name) as rank
+    from employees)
+where rank <= 10;
+
+--9번
+select nvl(to_char(extract(year from hire_date)), 'All Years') as years, sum(salary)
+from employees
+group by rollup(extract(year from hire_date))
+order by years;
+
+--10번
+select d.department_name, e.job_id, sum(e.salary)
+from employees e, departments d
+where e.department_id = d.department_id and d.department_id is not null
+group by grouping sets(d.department_name, e.job_id, ())
+order by d.department_name, e.job_id;
+
+
+--11번
+select department_id, name, salary, 
+    sum(salary) over (partition by department_id order by salary range between 100 preceding and 100 following) as sumsal
+from employees;
+
+
+--12번
+select employee_id, salary, round(avg(salary) over (partition by job_id)) as avg_sal,
+    (case
+        when salary > avg(salary) over (partition by job_id) then '직무 평균 이상'
+        when salary < avg(salary) over (partition by job_id) then '직무 평균 이하'
+        else '동일' end) as "직무비교",
+    (case
+        when salary > avg(salary) over () then '전체 평균 이상'
+        when salary < avg(salary) over () then '전체 평균 이하'
+        else '동일' end) as "전체비교"
+from employees;
