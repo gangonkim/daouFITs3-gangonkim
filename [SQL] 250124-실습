@@ -1,0 +1,72 @@
+ALTER SESSION SET STATISTICS_LEVEL = ALL;
+
+--튜닝전
+SELECT * FROM EMPLOYEES
+WHERE EMP_NO LIKE '101%' OR EMP_NO LIKE '103%';
+
+--튜닝후
+SELECT * FROM EMPLOYEES
+WHERE EMP_NO between 10100 and 10199 or EMP_NO between 10300 and 10399;
+
+
+
+--튜닝전
+select nvl(gender, 'non'), count(*)
+from employees
+group by nvl(gender, 'non');
+
+--튜닝후(인덱스에 함수 제거)
+select gender, count(*)
+from employees
+group by gender;
+
+
+--튜닝전
+select * from employees
+where gender||' '|| last_name = 'M Radwan';
+
+--튜닝후
+select * from employees
+where gender = 'M' and last_name = 'Radwan';
+
+
+--튜닝전
+select first_name, last_name, emp_no
+from employees
+where substr(emp_no, 1, 4) = 1030;
+
+--튜닝후
+select first_name, last_name, emp_no
+from employees
+where emp_no between 10300 and 10309;
+
+
+--튜닝전
+select distinct e.emp_no, e.first_name, e.last_name, d.dept_no
+from employees e, dept_manager d
+where e.emp_no = d.emp_no;
+
+--튜닝후
+select e.emp_no, e.first_name, e.last_name, 
+    (select d.dept_no from dept_manager d
+    where d.emp_no = e.emp_no) as dept_no
+from employees e;
+
+--튜닝전
+select count(distinct e.emp_no) as cnt
+from employees e, 
+    (select emp_no from salaries where salary > 50000) s
+where e.emp_no = s.emp_no;
+
+--튜닝후
+select count(distinct emp_no) from salaries
+where salary > 50000;
+
+select count(e.emp_no) as cnt
+from employees e
+where exists (select 1 from salaries s where s.salary > 50000 and e.emp_no = s.emp_no);
+
+
+
+SELECT * FROM TABLE(dbms_xplan.display_cursor(null, null,'ALLSTATS LAST'));
+
