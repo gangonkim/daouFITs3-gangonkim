@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<BorderPane fx:controller="example.controller.BookController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <TableView fx:id="tableView" prefHeight="308.0" prefWidth="700.0" BorderPane.alignment="CENTER">
+         <columns>
+            <TableColumn fx:id="isbnCol" prefWidth="75.0" text="ISBN" />
+            <TableColumn fx:id="titleCol" prefWidth="215.5" text="책 제목" />
+            <TableColumn fx:id="priceCol" prefWidth="157.0" text="책 가격" />
+            <TableColumn fx:id="authorCol" prefWidth="151.5" text="책 저자" />
+         </columns>
+      </TableView>
+   </center>
+   <bottom>
+      <FlowPane prefHeight="72.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="검색어">
+               <font>
+                  <Font size="24.0" />
+               </font>
+               <FlowPane.margin>
+                  <Insets left="100.0" top="20.0" />
+               </FlowPane.margin>
+            </Label>
+            <TextField fx:id="searchField">
+               <FlowPane.margin>
+                  <Insets left="30.0" top="20.0" />
+               </FlowPane.margin>
+            </TextField>
+            <Button fx:id="searchBtn" mnemonicParsing="false" text="검색">
+               <FlowPane.margin>
+                  <Insets left="30.0" top="20.0" />
+               </FlowPane.margin>
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+            <Button fx:id="insertBtn" mnemonicParsing="false" text="추가" onAction="#handleInsert">
+               <FlowPane.margin>
+                  <Insets left="30.0" top="20.0" />
+               </FlowPane.margin>
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+            <Button fx:id="deleteBtn" mnemonicParsing="false" text="삭제">
+               <FlowPane.margin>
+                  <Insets left="30.0" top="20.0" />
+               </FlowPane.margin>
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+         </children>
+      </FlowPane>
+   </bottom>
+</BorderPane>
