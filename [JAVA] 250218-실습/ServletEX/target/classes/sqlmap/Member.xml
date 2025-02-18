@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="example.MyBook">
+
+    <select id='selectByIdPw' parameterType="map" resultType="org.example.servletex.vo.MemberVO">
+        <!--SQL QUERY 안에 특수문자 태그로 인식되지 않도록 CDATA를 써줌-->
+        <![CDATA[
+            SELECT id, password, name
+            FROM member
+            WHERE id = #{id} AND password = #{password}
+        ]]>
+    </select>
+
+
+
+</mapper>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="example.MyBook">
+
+<!-- 검색 sql-->
+    <sql id="searchSql">
+        <where>
+            <if test="searchWord != null and searchWord != ''">
+                <if test="searchType == 'all'">
+                    title LIKE '%${searchWord}%' OR text LIKE '%${searchWord}%'
+                </if>
+                <if test="searchType != 'all'">
+                    ${searchType} LIKE '%${searchWord}%'
+                </if>
+            </if>
+        </where>
+    </sql>
+
+    <!-- 목록 -->
+    <select id="list" parameterType="org.example.servletex.vo.BoardVO" resultType="org.example.servletex.vo.BoardVO">
+        <![CDATA[
+            SELECT * FROM board
+            ORDER BY no DESC
+        ]]>
+    </select>
+
+    <insert id="insert" parameterType="org.example.servletex.vo.BoardVO">
+        <![CDATA[
+            INSERT INTO board (
+            no, title, text, writedate, writer
+            ) VALUES (
+            board_seq.NEXTVAL, #{title}, #{text}, SYSDATE, #{writer}
+            )
+        ]]>
+    </insert>
+
+    <update id="update" parameterType="org.example.servletex.vo.BoardVO">
+    <![CDATA[
+        UPDATE board
+        SET title = #{title},
+            text = #{text},
+            writedate = SYSDATE
+        WHERE bisbn = #{bisbn}
+        ]]>
+    </update>
+
+    <!-- 카운트 -->
+    <select id="count" parameterType="org.example.servletex.vo.BoardVO" resultType="int">
+        <![CDATA[
+            SELECT COUNT(*) FROM board
+        ]]>
+    </select>
+
+    <!-- 상세 -->
+    <select id="detail" parameterType="int" resultType="org.example.servletex.vo.BoardVO">
+        <![CDATA[
+            SELECT * FROM board WHERE no=#{no}
+        ]]>
+    </select>
+
+    <delete id="delete" parameterType="int">
+        <![CDATA[
+        DELETE FROM board WHERE no=#{no}
+        ]]>
+    </delete>
+
+    <!-- 조회수 증가 -->
+    <update id="increaseReadcnt" parameterType="int">
+        UPDATE board SET readcnt=readcnt+1 WHERE no=#{no}
+    </update>
+
+
+</mapper>
