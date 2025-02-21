@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="example.MyBook">
+
+    <!-- 좋아요 추가 -->
+    <insert id="addLike" parameterType="org.example.servletex.vo.BoardLikeVO">
+        INSERT INTO boardlike (memberid, boardno) VALUES (#{memberid}, #{boardno})
+    </insert>
+
+    <!-- 좋아요 삭제 -->
+    <delete id="removeLike" parameterType="org.example.servletex.vo.BoardLikeVO">
+        DELETE FROM boardlike WHERE memberid = #{memberid} AND boardno = #{boardno}
+    </delete>
+
+    <!-- 사용자가 좋아요를 눌렀는지 확인 -->
+    <select id="isLiked" parameterType="org.example.servletex.vo.BoardLikeVO" resultType="int">
+        SELECT COUNT(*) FROM boardlike WHERE memberid = #{memberid} AND boardno = #{boardno}
+    </select>
+
+    <!-- 게시글의 좋아요 개수 조회 -->
+    <select id="getLikeCount" parameterType="int" resultType="int">
+        SELECT COUNT(*) FROM boardlike WHERE boardno = #{boardno}
+    </select>
+
+
+</mapper>
